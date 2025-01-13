@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>pdr_vendas</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2025/01/07 16:37:09.085</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2025/01/07 16:37:09.085</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Table input</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
+      <to>Concat Fields</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup</from>
+      <to>Insert / update</to>
+      <enabled>N</enabled>
+    </hop>
+    <hop>
+      <from>Concat Fields</from>
+      <to>Database lookup</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup</from>
+      <to>PostgreSQL Bulk Loader</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Concat Fields</name>
+    <type>ConcatFields</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <ConcatFields>
+      <removeSelectedFields>N</removeSelectedFields>
+      <targetFieldLength>0</targetFieldLength>
+      <targetFieldName>nk_vendas</targetFieldName>
+    </ConcatFields>
+    <enclosure>"</enclosure>
+    <fields>
+      <field>
+        <length>16</length>
+        <name>dt_venda</name>
+        <precision>-1</precision>
+        <type>String</type>
+      </field>
+      <field>
+        <length>4</length>
+        <name>ds_dia</name>
+        <precision>-1</precision>
+        <type>String</type>
+      </field>
+    </fields>
+    <separator>&amp;	</separator>
+    <attributes/>
+    <GUI>
+      <xloc>864</xloc>
+      <yloc>416</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Database lookup</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cache>Y</cache>
+    <cache_load_all>Y</cache_load_all>
+    <cache_size>0</cache_size>
+    <connection>DW - Prod - Legado</connection>
+    <lookup>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <fail_on_multiple>N</fail_on_multiple>
+      <key>
+        <condition>=</condition>
+        <field>ds_name</field>
+        <name>ds_produto</name>
+      </key>
+      <schema>padaria</schema>
+      <table>pdr_produto</table>
+      <value>
+        <name>sk_produto</name>
+        <trim_type>none</trim_type>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <GUI>
+      <xloc>1040</xloc>
+      <yloc>416</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Insert / update</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>100</commit>
+    <connection>DW - Prod - Legado</connection>
+    <lookup>
+      <key>
+        <condition>=</condition>
+        <field>nk_vendas</field>
+        <name>nk_vendas</name>
+      </key>
+      <schema>padaria</schema>
+      <table>pdr_vendas</table>
+      <value>
+        <name>nk_vendas</name>
+        <rename>nk_vendas</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>ds_produto</name>
+        <rename>ds_produto</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>nr_quantidade</name>
+        <rename>nr_quantidade</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>sk_produto</name>
+        <rename>sk_produto</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+    <update_bypassed>N</update_bypassed>
+    <attributes/>
+    <GUI>
+      <xloc>1232</xloc>
+      <yloc>416</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>PostgreSQL Bulk Loader</name>
+    <type>PGBulkLoader</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>DW - Prod - Legado</connection>
+    <delimiter>;</delimiter>
+    <enclosure>"</enclosure>
+    <load_action>TRUNCATE</load_action>
+    <mapping>
+      <date_mask/>
+      <field_name>nk_vendas</field_name>
+      <stream_name>nk_vendas</stream_name>
+    </mapping>
+    <mapping>
+      <date_mask/>
+      <field_name>ds_produto</field_name>
+      <stream_name>ds_produto</stream_name>
+    </mapping>
+    <mapping>
+      <date_mask/>
+      <field_name>nr_quantidade</field_name>
+      <stream_name>nr_quantidade</stream_name>
+    </mapping>
+    <mapping>
+      <date_mask/>
+      <field_name>sk_produto</field_name>
+      <stream_name>sk_produto</stream_name>
+    </mapping>
+    <schema>padaria</schema>
+    <stop_on_error>N</stop_on_error>
+    <table>pdr_vendas</table>
+    <attributes/>
+    <GUI>
+      <xloc>1232</xloc>
+      <yloc>528</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>datetime</name>
+        <rename>dt_venda</rename>
+      </field>
+      <field>
+        <name>day of week</name>
+        <rename>ds_dia</rename>
+      </field>
+      <field>
+        <name>product</name>
+        <rename>ds_produto</rename>
+      </field>
+      <field>
+        <name>quantity</name>
+        <rename>nr_quantidade</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>704</xloc>
+      <yloc>416</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Table input</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>DW - Prod - Legado</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT *
+FROM padaria.sta_vendas
+</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>480</xloc>
+      <yloc>416</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>

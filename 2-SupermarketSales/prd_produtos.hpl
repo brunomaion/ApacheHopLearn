@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>prd_produtos</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2025/01/06 17:09:52.672</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2025/01/06 17:09:52.672</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Table input</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
+      <to>Insert / update</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Table input</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>DW - Prod - Legado</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT * FROM teste2.stage_produtos WHERE current_ind IS TRUE </sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>352</xloc>
+      <yloc>368</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>product_id</name>
+        <rename>cd_produto</rename>
+      </field>
+      <field>
+        <name>product_name</name>
+        <rename>ds_nomeproduto</rename>
+      </field>
+      <field>
+        <name>product_price</name>
+        <rename>nr_preco</rename>
+      </field>
+      <field>
+        <name>current_ind</name>
+        <rename>bl_lastprice</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>608</xloc>
+      <yloc>368</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Insert / update</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <commit>100</commit>
+    <connection>DW - Prod - Legado</connection>
+    <lookup>
+      <key>
+        <condition>=</condition>
+        <field>cd_produto</field>
+        <name>cd_produto</name>
+        <name2/>
+      </key>
+      <schema>teste2</schema>
+      <table>prd_produtos</table>
+      <value>
+        <name>cd_produto</name>
+        <rename>cd_produto</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>ds_nomeproduto</name>
+        <rename>ds_nomeproduto</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>nr_preco</name>
+        <rename>nr_preco</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>bl_lastprice</name>
+        <rename>bl_lastprice</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+    <update_bypassed>N</update_bypassed>
+    <attributes/>
+    <GUI>
+      <xloc>864</xloc>
+      <yloc>368</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>
